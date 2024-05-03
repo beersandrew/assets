@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from pxr import Usd, UsdGeom, UsdMedia, Sdf, Gf, UsdUtils, UsdLux
+from pxr import Usd, UsdGeom, UsdMedia, Sdf, Gf, UsdUtils, UsdLux, UsdSkel
 import subprocess
 import math
 import os
@@ -170,13 +170,19 @@ def create_camera_translation_and_clipping(subject_stage, camera_prim, render_pu
     return cameraPosition
 
 def get_bounding_box(subject_stage, render_purpose_tokens):
+    skelRootPrims = [prim for prim in Usd.PrimRange(subject_stage.GetPseudoRoot()) if prim.IsA(UsdSkel.Root)]
+    for prim in skelRootPrims:
+        skelRoot = UsdSkel.Root(prim)
+        with Usd.EditContext(subject_stage, subject_stage.GetSessionLayer()):
+            UsdSkel.BakeSkinning(skelRoot, Gf.Interval(1.0))
 
+    
     time_codes_per_second = subject_stage.GetTimeCodesPerSecond()
     time_code = Usd.TimeCode.Default() if time_codes_per_second == 0.0 else Usd.TimeCode(0.0)
     bboxCache = UsdGeom.BBoxCache(time_code, render_purpose_tokens)
-    # Compute the bounding box for all geometry under the root
     root = subject_stage.GetPseudoRoot()
-    return bboxCache.ComputeWorldBound(root).GetBox()
+    bbox = bboxCache.ComputeWorldBound(root).GetBox()
+    return bbox
 
 def get_distance_to_camera(min_bound, max_bound, camera_prim, is_z_up):
     focal_length = camera_prim.GetFocalLengthAttr().Get()
