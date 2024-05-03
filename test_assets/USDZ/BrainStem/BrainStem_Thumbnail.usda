@@ -1,0 +1,48 @@
+#usda 1.0
+(
+    endTimeCode = 1291
+    framesPerSecond = 24
+    metersPerUnit = 1
+    startTimeCode = 1
+    timeCodesPerSecond = 24
+    defaultPrim = "BrainStem"
+    upAxis = "Y"
+)
+
+def "BrainStem" (
+    prepend references = @BrainStem.usdz@
+)
+{
+}
+
+def Xform "cameras"
+{
+    def Camera "thumbnail_camera"
+    {
+        float2 clippingRange = (0.0001, 8860.577)
+        float exposure = 0
+        float focalLength = 0.5
+        float focusDistance = 5
+        float fStop = 0
+        float horizontalAperture = 0.23299514
+        float horizontalApertureOffset = 0
+        asset houdini:backgroundimage = @@
+        asset houdini:foregroundimage = @@
+        float houdini:guidescale = 1
+        bool houdini:inviewermenu = 1
+        token projection = "perspective"
+        double shutter:close = 0.25
+        double shutter:open = -0.25
+        float verticalAperture = 0.23299514
+        float verticalApertureOffset = 0
+        matrix4d xformOp:transform = ( (0.9997784163311225, -7.376262683121693e-9, -0.021050373831187106, 0), (0.0007043720523260334, 0.9994400269381014, 0.03345349628931206, 0), (0.02103858594213697, -0.03346091083588519, 0.999218567355305, 0), (0.11945085736358786, 0.7650732916831123, 4.090229051628064, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+    }
+
+    def DomeLight "DomeLight"
+    {
+        asset inputs:texture:file = @../../../scripts/thumbnail-generator/studio.exr@
+        token inputs:texture:format = "latlong"
+    }
+}
+
